@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start --hostname 127.0.0.1",
     "typecheck": "tsc --noEmit",
-    "test": "node --test tests/*.test.mjs",
+    "test": "node --test tests/*.test.mjs && node --import tsx --test tests/request.test.ts",
     "test:browser": "node --import tsx --test tests/audit.test.ts"
   },
   "dependencies": {
