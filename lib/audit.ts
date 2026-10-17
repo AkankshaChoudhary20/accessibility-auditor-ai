@@ -28,7 +28,7 @@ export async function inspectPage(page: Page, url: string): Promise<Report> {
       } catch { /* Frame/shadow selectors remain visible in the report. */ }
     }
     return count;
-  }, selectors);
+  }, [...new Set(selectors)]);
   const screenshot = await page.screenshot({type: 'jpeg', quality: 65, fullPage: false, timeout: 5_000});
   return {
     url: page.url(), title: await page.title(), scannedAt: new Date().toISOString(),
@@ -57,3 +57,4 @@ export async function audit(raw: string) {
     finally { clearTimeout(timeout); }
   } finally { await browser.close(); }
 }
+
