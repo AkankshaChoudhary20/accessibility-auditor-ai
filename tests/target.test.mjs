@@ -17,3 +17,14 @@ test('filters private and reserved addresses', () => {
   for (const address of ['0.0.0.0','100.64.0.1','172.31.1.1','192.168.0.1','198.19.0.1','224.0.0.1','fc00::1','fe80::1','2001:db8::1']) assert.equal(isPublicAddress(address), false, address);
   assert.equal(isPublicAddress('8.8.8.8'), true);
 });
+
+test('rejects documentation-only IPv4 ranges, including DNS answers', async () => {
+  for (const address of ['192.0.2.1','198.51.100.1','203.0.113.1']) {
+    assert.equal(isPublicAddress(address), false, address);
+    await assert.rejects(validateTarget(`http://${address}`));
+    await assert.rejects(validateTarget('https://example.com', async () => [{address}]));
+  }
+  for (const address of ['192.1.2.1','198.51.101.1','203.0.114.1']) {
+    assert.equal(isPublicAddress(address), true, address);
+  }
+});
