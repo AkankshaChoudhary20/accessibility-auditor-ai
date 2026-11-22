@@ -14,6 +14,8 @@ export async function inspectPage(page: Page, url: string): Promise<Report> {
   const selectors: string[] = result.violations.flatMap(v => v.nodes.flatMap(n =>
     n.target.length === 1 && typeof n.target[0] === 'string' ? [n.target[0]] : []));
   const highlightedElements = await page.evaluate((targets: string[]) => {
+    const container = document.body;
+    if (!container) return 0;
     let count = 0;
     for (const target of targets) {
       try {
@@ -23,7 +25,7 @@ export async function inspectPage(page: Page, url: string): Promise<Report> {
         if (!rect.width || !rect.height) continue;
         const overlay = document.createElement('div');
         overlay.style.cssText = `position:absolute;pointer-events:none;z-index:2147483647;border:3px solid #e11d48;box-sizing:border-box;left:${rect.left + scrollX}px;top:${rect.top + scrollY}px;width:${rect.width}px;height:${rect.height}px;`;
-        document.body.appendChild(overlay);
+        container.appendChild(overlay);
         count++;
       } catch { /* Frame/shadow selectors remain visible in the report. */ }
     }
